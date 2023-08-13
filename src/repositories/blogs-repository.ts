@@ -34,7 +34,7 @@ export const blogsRepository = {
     },
 
     deleteBlog(id: string) {
-        const deleteBlog = db.blogs.filter(b => b.id !== id)
+        const deleteBlog = db.blogs.filter(b => b.id === id)
         if (deleteBlog) {
             for (let i = 0; i < db.blogs.length; i++) {
                 if (db.blogs[i].id === id) {

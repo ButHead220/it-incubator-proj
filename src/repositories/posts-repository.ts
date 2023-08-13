@@ -1,16 +1,5 @@
 import {db} from "../database";
 
-
-type PostsType = {
-    id: string,
-    title: string,
-    shortDescription: string,
-    content: string,
-    blogId: string,
-    blogName: string,
-}
-
-const posts: PostsType[] = []
 export const postsRepository = {
     foundAllPosts() {
         return db.posts
@@ -36,6 +25,7 @@ export const postsRepository = {
 
     updatePost(postId: string, title: string, shortDescription: string, content:string, blogId: string) {
         let foundPost = db.posts.find(p => p.id === postId)
+        console.log(foundPost)
         if (foundPost) {
             foundPost.title = title
             foundPost.shortDescription = shortDescription

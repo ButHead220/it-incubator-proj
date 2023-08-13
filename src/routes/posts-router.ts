@@ -42,12 +42,13 @@ postsRouter.put('/:postId',
     postsValidation,
     (req: Request, res: Response) => {
     const {title, shortDescription, content, blogId} = req.body
+        const postId = req.params.id
     const successUpdate = postsRepository.updatePost(
-        req.params.id,
+        postId,
         title,
         shortDescription,
         content,
-        blogId
+        blogId,
     )
 
     if (successUpdate) {
