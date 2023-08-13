@@ -42,9 +42,8 @@ postsRouter.put('/:postId',
     postsValidation,
     (req: Request, res: Response) => {
     const {title, shortDescription, content, blogId} = req.body
-        const postId = req.params.id
     const successUpdate = postsRepository.updatePost(
-        postId,
+        req.params.postId,
         title,
         shortDescription,
         content,
