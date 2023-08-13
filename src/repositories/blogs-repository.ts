@@ -35,7 +35,7 @@ export const blogsRepository = {
 
     deleteBlog(id: string) {
         const deleteBlog = db.blogs.filter(b => b.id === id)
-        if (deleteBlog) {
+        if (deleteBlog.length) {
             for (let i = 0; i < db.blogs.length; i++) {
                 if (db.blogs[i].id === id) {
                     db.blogs.splice(i, 1)

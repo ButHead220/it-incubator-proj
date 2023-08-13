@@ -38,9 +38,9 @@ export const postsRepository = {
     },
 
     deletePost(id: string) {
-        const deletePost = db.posts.find(p => p.id === id)
+        const deletePost = db.posts.filter(p => p.id === id)
 
-        if (deletePost) {
+        if (deletePost.length) {
             for (let i = 0; i < db.posts.length; i++) {
                 if (db.posts[i].id === id) {
                     db.posts.splice(i, 1)
