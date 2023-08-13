@@ -57,7 +57,6 @@ blogsRouter.put('/:blogsId',
 
 blogsRouter.delete('/:blogsId',
     authorizationMiddleware,
-    blogsValidation,
     (req: Request, res: Response) => {
         const successDelete = blogsRepository.deleteBlog(req.params.blogsId)
 

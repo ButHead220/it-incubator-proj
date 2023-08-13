@@ -59,7 +59,6 @@ postsRouter.put('/:postId',
 
 postsRouter.delete('/:postId',
     authorizationMiddleware,
-    postsValidation,
     (req: Request, res: Response) => {
         const deletePost = postsRepository.deletePost(req.params.postId)
 
