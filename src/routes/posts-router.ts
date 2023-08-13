@@ -53,7 +53,7 @@ postsRouter.put('/:postId',
     if (successUpdate) {
         res.sendStatus(204)
     } else {
-        res.sendStatus(400)
+        res.sendStatus(404)
     }
     })
 
