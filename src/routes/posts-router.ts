@@ -1,22 +1,23 @@
 import {Router, Request, Response} from "express";
-import {postsRepository} from "../repositories/posts-repository";
+import {postsRepository} from "../repositories/posts-in-memo-repository";
 import {authorizationMiddleware} from "../middlewares/authorizationMiddleware";
 import {postsValidation} from "../middlewares/post-validation";
 
 export const postsRouter = Router({})
 
-postsRouter.get ('/', (req: Request, res: Response) => {
-    const posts = postsRepository.foundAllPosts()
+postsRouter.get ('/',
+    async (req: Request, res: Response) => {
+    const posts = await postsRepository.foundAllPosts()
     res.send(posts)
 })
 
 postsRouter.post ('/',
     authorizationMiddleware,
     postsValidation,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
 
     const {title, shortDescription, content, blogId, blogName} = req.body
-    const newPost = postsRepository.createPost(
+    const newPost = await postsRepository.createPost(
         title,
         shortDescription,
         content,
@@ -27,8 +28,9 @@ postsRouter.post ('/',
     res.status(201).send(newPost)
 })
 
-postsRouter.get('/:postId', (req: Request, res: Response) => {
-    const post = postsRepository.foundPostById(req.params.postId)
+postsRouter.get('/:postId',
+    async (req: Request, res: Response) => {
+    const post = await postsRepository.foundPostById(req.params.postId)
 
     if (post) {
         res.send(post)
@@ -40,9 +42,9 @@ postsRouter.get('/:postId', (req: Request, res: Response) => {
 postsRouter.put('/:postId',
     authorizationMiddleware,
     postsValidation,
-    (req: Request, res: Response) => {
+    async (req: Request, res: Response) => {
     const {title, shortDescription, content, blogId} = req.body
-    const successUpdate = postsRepository.updatePost(
+    const successUpdate = await postsRepository.updatePost(
         req.params.postId,
         title,
         shortDescription,
@@ -59,8 +61,8 @@ postsRouter.put('/:postId',
 
 postsRouter.delete('/:postId',
     authorizationMiddleware,
-    (req: Request, res: Response) => {
-        const deletePost = postsRepository.deletePost(req.params.postId)
+    async (req: Request, res: Response) => {
+        const deletePost = await postsRepository.deletePost(req.params.postId)
 
         if (deletePost) {
             res.sendStatus(204)

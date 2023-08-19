@@ -1,10 +1,10 @@
 import {db} from "../database"
 export const blogsRepository = {
-    findAllBlogs() {
+    async findAllBlogs() {
         return db.blogs
     },
 
-    createBlog (name: string, description: string, websiteUrl: string) {
+    async createBlog (name: string, description: string, websiteUrl: string) {
         const newBlog = {
             id: (+(new Date())).toString(),
             name,
@@ -16,12 +16,12 @@ export const blogsRepository = {
         return newBlog
     },
 
-    findBlogById(id: string) {
+    async findBlogById(id: string) {
         let blog = db.blogs.find(b => b.id === id)
         return blog;
     },
 
-    updateBlog (id: string, name: string, description: string, websiteUrl: string) {
+    async updateBlog (id: string, name: string, description: string, websiteUrl: string) {
         const blog = db.blogs.find(b => b.id === id)
         if (blog) {
             blog.name = name
@@ -33,7 +33,7 @@ export const blogsRepository = {
         }
     },
 
-    deleteBlog(id: string) {
+    async deleteBlog(id: string) {
         const deleteBlog = db.blogs.filter(b => b.id === id)
         if (deleteBlog.length) {
             for (let i = 0; i < db.blogs.length; i++) {

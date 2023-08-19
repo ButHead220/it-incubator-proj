@@ -1,11 +1,11 @@
 import {db} from "../database";
 
 export const postsRepository = {
-    foundAllPosts() {
+    async foundAllPosts() {
         return db.posts
     },
 
-    createPost(title: string, shortDescription: string, content: string, blogId: string, blogName: string) {
+    async createPost(title: string, shortDescription: string, content: string, blogId: string, blogName: string) {
         const newPost = {
             id: (+(new Date())).toString(),
             title,
@@ -18,12 +18,12 @@ export const postsRepository = {
         return newPost
     },
 
-    foundPostById(id: string) {
+    async foundPostById(id: string) {
         const foundPost = db.posts.find(p => p.id === id)
         return foundPost
     },
 
-    updatePost(postId: string, title: string, shortDescription: string, content: string, blogId: string) {
+    async updatePost(postId: string, title: string, shortDescription: string, content: string, blogId: string) {
         const foundPost = db.posts.find(p => p.id === postId)
         if (foundPost) {
             foundPost.title = title
@@ -36,7 +36,7 @@ export const postsRepository = {
         }
     },
 
-    deletePost(id: string) {
+    async deletePost(id: string) {
         const deletePost = db.posts.filter(p => p.id === id)
 
         if (deletePost.length) {
