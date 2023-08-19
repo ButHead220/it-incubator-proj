@@ -1,5 +1,5 @@
 import {Request, Response, Router} from "express"
-import {blogsRepository} from "../repositories/blogs-in-memo-repository";
+import {blogsRepository} from "../repositories/blogs-db-repository";
 import {authorizationMiddleware} from "../middlewares/authorizationMiddleware";
 import {blogsValidation} from "../middlewares/blogs-validation";
 

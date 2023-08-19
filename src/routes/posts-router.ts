@@ -1,5 +1,5 @@
 import {Router, Request, Response} from "express";
-import {postsRepository} from "../repositories/posts-in-memo-repository";
+import {postsRepository} from "../repositories/posts-db-repository";
 import {authorizationMiddleware} from "../middlewares/authorizationMiddleware";
 import {postsValidation} from "../middlewares/post-validation";
 
