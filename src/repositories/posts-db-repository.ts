@@ -1,4 +1,4 @@
-import {postsCollection} from "../mongoDb";
+import {blogsCollection, postsCollection} from "../mongoDb";
 import {postsViewModel} from "../types/types";
 
 const mapPost = (post: postsViewModel) => ({
@@ -16,14 +16,18 @@ export const postsRepository = {
         return foundPosts.map(mapPost)
     },
 
-    async createPost(title: string, shortDescription: string, content: string, blogId: string, blogName: string): Promise<postsViewModel> {
+    async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<postsViewModel | null> {
+        const foundBlog =  await blogsCollection.findOne({id: blogId})
+        if (!foundBlog) {
+            return null
+        }
         const newPost = {
             id: (+(new Date())).toString(),
             title,
             shortDescription,
             content,
             blogId,
-            blogName,
+            blogName: foundBlog.name,
             createdAt: new Date().toISOString(),
         }
         await postsCollection.insertOne(newPost)

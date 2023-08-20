@@ -16,13 +16,12 @@ postsRouter.post ('/',
     postsValidation,
     async (req: Request, res: Response) => {
 
-    const {title, shortDescription, content, blogId, blogName} = req.body
+    const {title, shortDescription, content, blogId} = req.body
     const newPost = await postsRepository.createPost(
         title,
         shortDescription,
         content,
         blogId,
-        blogName
     )
 
     res.status(201).send(newPost)
