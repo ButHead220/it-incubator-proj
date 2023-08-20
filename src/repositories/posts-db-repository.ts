@@ -1,11 +1,22 @@
 import {postsCollection} from "../mongoDb";
+import {postsViewModel} from "../types/types";
 
+const mapPost = (post: postsViewModel) => ({
+    id: post.id,
+    title: post.title,
+    shortDescription: post.shortDescription,
+    content: post.content,
+    blogId: post.blogId,
+    blogName: post.blogName,
+    createdAt: post.createdAt,
+})
 export const postsRepository = {
     async foundAllPosts() {
-        return postsCollection.find({}).toArray()
+        const foundPosts = await postsCollection.find({}).toArray()
+        return foundPosts.map(mapPost)
     },
 
-    async createPost(title: string, shortDescription: string, content: string, blogId: string, blogName: string) {
+    async createPost(title: string, shortDescription: string, content: string, blogId: string, blogName: string): Promise<postsViewModel> {
         const newPost = {
             id: (+(new Date())).toString(),
             title,
@@ -13,14 +24,36 @@ export const postsRepository = {
             content,
             blogId,
             blogName,
-            createdAt: (new Date()).toString(),
+            createdAt: new Date().toISOString(),
         }
         await postsCollection.insertOne(newPost)
-        return newPost
+        return {
+            id: newPost.id,
+            title: newPost.title,
+            shortDescription: newPost.shortDescription,
+            content: newPost.content,
+            blogId: newPost.blogId,
+            blogName: newPost.blogName,
+            createdAt: newPost.createdAt,
+        }
     },
 
-    async foundPostById(id: string) {
-        return postsCollection.findOne({id: id})
+    async foundPostById(id: string): Promise<postsViewModel | null> {
+        const foundPost = await postsCollection.findOne({id: id})
+
+        if (foundPost) {
+            return {
+                id: foundPost.id,
+                title: foundPost.title,
+                shortDescription: foundPost.shortDescription,
+                content: foundPost.content,
+                blogId: foundPost.blogId,
+                blogName: foundPost.blogName,
+                createdAt: foundPost.createdAt,
+            }
+        } else {
+            return null
+        }
     },
 
     async updatePost(postId: string, title: string, shortDescription: string, content: string, blogId: string) {

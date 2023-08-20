@@ -61,7 +61,7 @@ blogsRouter.delete('/:blogsId',
     authorizationMiddleware,
     async (req: Request, res: Response) => {
         const successDelete = await blogsRepository.deleteBlog(req.params.blogsId)
-
+        console.log(successDelete)
         if (successDelete) {
             res.sendStatus(204)
         } else {
