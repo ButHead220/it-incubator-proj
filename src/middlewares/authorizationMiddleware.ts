@@ -8,5 +8,8 @@ export const authorizationMiddleware = (req: Request, res: Response, next: NextF
     if (auth !== 'Basic YWRtaW46cXdlcnR5') {
         res.sendStatus(401)
     }
+    if (auth !== 'Bearer YWRtaW46cXdlcnR5') {
+        res.sendStatus(401)
+    }
     return next()
 }
