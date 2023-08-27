@@ -24,7 +24,7 @@ blogsRouter.get('/' ,
             sortDirection,
             pageNumber,
             pageSize} = req.query
-        console.log(searchNameTerm)
+
         if (searchNameTerm) {
             const foundBlogs = await blogsRepository.findBlogsWithQuery(searchNameTerm, sortBy, sortDirection, pageNumber, pageSize)
             res.send(foundBlogs)
