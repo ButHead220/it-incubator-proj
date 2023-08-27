@@ -97,8 +97,7 @@ export const blogsRepository = {
 
     async findBlogsWithQuery(querySearchNameTerm: string, querySortBy: string, querySortDirection: string, queryPageNumber: number, queryPageSize: number): Promise<paginatorViewModel<blogViewModel>> {
 
-        const searchNameTerm = querySearchNameTerm
-        const regex = new RegExp(`.*${searchNameTerm}.*`, "i")
+        const regex = new RegExp(`.*${querySearchNameTerm}.*`, "i")
         const sortBy = querySortBy ? querySortBy : 'createdAt'
         const sortDirection = querySortDirection === 'asc' ? 1 : -1
         const pageNumber = queryPageNumber ? Number(queryPageNumber) : 1
@@ -112,7 +111,7 @@ export const blogsRepository = {
             .limit(pageSize)
             .toArray()
 
-        const totalCount = await blogsCollection.find({ name : {$regex: searchNameTerm}}).count()
+        const totalCount = await blogsCollection.find({ name : {$regex: regex}}).count()
         const pagesCount = Math.ceil(totalCount/pageSize)
 
         const mapedFoundedDbBlogs: blogViewModel[] = foundedDbBlogs.map(dbBlog => {
