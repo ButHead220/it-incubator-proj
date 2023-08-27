@@ -105,7 +105,7 @@ export const postsRepository = {
         return result.deletedCount === 1
     },
 
-    async findPostsByBlogId(blogsId: string, querySortBy: string, querySortDirection: string, queryPageNumber: number, queryPageSize: number) {
+    async findPostsByBlogId(blogId: string, querySortBy: string, querySortDirection: string, queryPageNumber: number, queryPageSize: number) {
         const sortBy = querySortBy ? querySortBy : 'createdAt'
         const sortDirection = querySortDirection === 'asc' ? 1 : -1
         const pageNumber = queryPageNumber ? Number(queryPageNumber) : 1
@@ -114,13 +114,13 @@ export const postsRepository = {
         const skipPages = (pageNumber - 1) * pageSize
 
         const foundedDbPostsByBlogId = await postsCollection
-            .find({ blogId: blogsId })
+            .find({ blogId: blogId })
             .sort({[sortBy]: sortDirection})
             .skip(skipPages)
             .limit(pageSize)
             .toArray()
 
-        const totalCount = await postsCollection.find({}).count()
+        const totalCount = await postsCollection.find({ blogId: blogId}).count()
         const pagesCount = Math.ceil(totalCount/pageSize)
 
         const mapedFoundedDbPostsByBlogId: postsViewModel[] = foundedDbPostsByBlogId.map(dbPost => {
