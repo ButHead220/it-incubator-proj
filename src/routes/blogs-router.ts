@@ -12,7 +12,6 @@ import {
     RequestWithQuery, sortingQueryModel
 } from "../dto/types";
 import {postsRepository} from "../repositories/mongoDb/posts-db-repository";
-import {postsValidation} from "../middlewares/post-validation";
 import {postsValidationByBlogId} from "../middlewares/post-validation-by-blog-id";
 
 export const blogsRouter = Router({})
@@ -59,8 +58,7 @@ blogsRouter.get('/:blogsId/posts',
         if (blog) {
             const foundPostsByBlogId: paginatorViewModel<postsViewModel> = await postsRepository.findPostsByBlogId(blogsId, sortBy, sortDirection, pageNumber, pageSize)
             res.send(foundPostsByBlogId)
-        }
-        res.sendStatus(404)
+        } else { res.sendStatus(404) }
     })
 
 blogsRouter.post ('/',
