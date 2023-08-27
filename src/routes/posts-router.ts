@@ -55,7 +55,7 @@ postsRouter.put('/:postId',
     async (req: Request, res: Response) => {
     const {title, shortDescription, content, blogId} = req.body
 
-    const foundPost = await postsQueryRepository.foundPostById(req.params.id)
+    const foundPost = await postsQueryRepository.foundPostById(req.params.postId)
 
     if (foundPost) {
         await postsService.updatePost(foundPost, title, shortDescription, content, blogId,)
@@ -69,7 +69,7 @@ postsRouter.delete('/:postId',
     authorizationMiddleware,
     async (req: Request, res: Response) => {
 
-        const foundPost = await postsQueryRepository.foundPostById(req.params.id)
+        const foundPost = await postsQueryRepository.foundPostById(req.params.postId)
         if (foundPost) {
             await postsService.deletePost(foundPost)
             res.sendStatus(204)

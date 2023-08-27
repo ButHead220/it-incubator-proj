@@ -24,6 +24,7 @@ export const postsService = {
         return postsCommandRepository.updatePost(post)
     },
     async deletePost(foundPost: postsViewModel) {
+        console.log(foundPost)
         return await postsCommandRepository.deletePost(foundPost.id)
     },
 }

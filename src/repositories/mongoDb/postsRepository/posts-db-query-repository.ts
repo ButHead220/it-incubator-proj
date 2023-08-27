@@ -41,6 +41,7 @@ export const postsQueryRepository = {
         }
     },
     async foundPostById(id: string): Promise<postsViewModel | null> {
+
         const foundPost = await postsCollection.findOne({id: id})
 
         if (foundPost) {
