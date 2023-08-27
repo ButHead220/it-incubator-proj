@@ -1,7 +1,7 @@
-import {blogsCollection} from "../../mongoDb";
-import {blogViewModel, paginatorViewModel} from "../../dto/types";
+import {blogViewModel, paginatorViewModel} from "../../../dto/types";
+import {blogsCollection} from "../../../mongoDb";
 
-export const blogsRepository = {
+export const blogsQueryRepository = {
     async findAllBlogs(querySortBy: string, querySortDirection: string, queryPageNumber: number, queryPageSize: number): Promise<paginatorViewModel<blogViewModel>> {
 
         const sortBy = querySortBy ? querySortBy : 'createdAt'
@@ -40,61 +40,19 @@ export const blogsRepository = {
             items: mapedFoundedDbBlogs
         }
     },
-
-    async createBlog (name: string, description: string, websiteUrl: string): Promise<blogViewModel> {
-        const newBlog = {
-            id: (+(new Date())).toString(),
-            name,
-            description,
-            websiteUrl,
-            createdAt: new Date().toISOString(),
-            isMembership: false
-        }
-
-        await blogsCollection.insertOne(newBlog)
-
-        return {
-            id: newBlog.id,
-            name: newBlog.name,
-            description: newBlog.description,
-            websiteUrl: newBlog.websiteUrl,
-            createdAt: newBlog.createdAt,
-            isMembership: newBlog.isMembership,
-        }
-    },
-
     async findBlogById(id: string): Promise<blogViewModel | null> {
         const foundBlog = await blogsCollection.findOne({id: id})
 
         if (foundBlog) {
             return {
-            id: foundBlog.id,
-            name: foundBlog.name,
-            description: foundBlog.description,
-            websiteUrl: foundBlog.websiteUrl,
-            createdAt: foundBlog.createdAt,
-            isMembership: foundBlog.isMembership,
-        }} else { return null }
+                id: foundBlog.id,
+                name: foundBlog.name,
+                description: foundBlog.description,
+                websiteUrl: foundBlog.websiteUrl,
+                createdAt: foundBlog.createdAt,
+                isMembership: foundBlog.isMembership,
+            }} else { return null }
     },
-
-    async updateBlog (id: string, name: string, description: string, websiteUrl: string) {
-        const result = await blogsCollection.updateOne({id: id}, {
-            $set: {
-                name: name,
-                description: description,
-                websiteUrl: websiteUrl,
-            }
-        })
-
-        return result.matchedCount === 1
-    },
-
-    async deleteBlog(id: string) {
-        const result = await blogsCollection.deleteOne({id: id})
-        return result.deletedCount === 1
-    },
-
-
     async findBlogsWithQuery(querySearchNameTerm: string, querySortBy: string, querySortDirection: string, queryPageNumber: number, queryPageSize: number): Promise<paginatorViewModel<blogViewModel>> {
 
         const regex = new RegExp(`.*${querySearchNameTerm}.*`, "i")
@@ -133,8 +91,4 @@ export const blogsRepository = {
             items: mapedFoundedDbBlogs
         }
     },
-
-    async findPostsByBlogId() {
-
-    }
 }

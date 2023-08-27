@@ -1,9 +1,8 @@
 import {Request, Response, Router} from "express"
-import {blogsRepository} from "../repositories/mongoDb/blogs-db-repository";
 import {authorizationMiddleware} from "../middlewares/authorizationMiddleware";
 import {blogsValidation} from "../middlewares/blogs-validation";
 import {
-    blogSortingQueryModel,
+    blogSortingQueryModel, blogViewModel,
     paginatorViewModel,
     postInputModel,
     postsViewModel,
@@ -11,8 +10,11 @@ import {
     RequestWithParamsAndQuery,
     RequestWithQuery, sortingQueryModel
 } from "../dto/types";
-import {postsRepository} from "../repositories/mongoDb/posts-db-repository";
 import {postsValidationByBlogId} from "../middlewares/post-validation-by-blog-id";
+import {blogService} from "../services/blog-service";
+import {blogsQueryRepository} from "../repositories/mongoDb/blogsRepository/blogs-db-query-repository";
+import {postsQueryRepository} from "../repositories/mongoDb/postsRepository/posts-db-query-repository";
+import {postsService} from "../services/post-service";
 
 export const blogsRouter = Router({})
 
@@ -26,10 +28,10 @@ blogsRouter.get('/' ,
             pageSize} = req.query
 
         if (searchNameTerm) {
-            const foundBlogs = await blogsRepository.findBlogsWithQuery(searchNameTerm, sortBy, sortDirection, pageNumber, pageSize)
+            const foundBlogs = await blogsQueryRepository.findBlogsWithQuery(searchNameTerm, sortBy, sortDirection, pageNumber, pageSize)
             res.send(foundBlogs)
         } else {
-            const foundBlogs = await blogsRepository.findAllBlogs(sortBy, sortDirection, pageNumber, pageSize)
+            const foundBlogs = await blogsQueryRepository.findAllBlogs(sortBy, sortDirection, pageNumber, pageSize)
             res.send(foundBlogs)
         }
 
@@ -39,7 +41,7 @@ blogsRouter.get('/' ,
 blogsRouter.get('/:blogsId',
     async (req: Request, res: Response) => {
 
-        const blog = await blogsRepository.findBlogById(req.params.blogsId)
+        const blog = await blogsQueryRepository.findBlogById(req.params.blogsId)
 
         if (blog) {
             res.send(blog)
@@ -51,12 +53,11 @@ blogsRouter.get('/:blogsId',
 blogsRouter.get('/:blogsId/posts',
     async (req: RequestWithParamsAndQuery<{blogsId: string}, sortingQueryModel>, res: Response) => {
         const {pageNumber, pageSize, sortBy, sortDirection} = req.query
-        const blogsId = req.params.blogsId
 
-        const blog = await blogsRepository.findBlogById(blogsId)
+        const blog = await blogsQueryRepository.findBlogById(req.params.blogsId)
 
         if (blog) {
-            const foundPostsByBlogId: paginatorViewModel<postsViewModel> = await postsRepository.findPostsByBlogId(blogsId, sortBy, sortDirection, pageNumber, pageSize)
+            const foundPostsByBlogId: paginatorViewModel<postsViewModel> = await postsQueryRepository.findPostsByBlogId(req.params.blogsId, sortBy, sortDirection, pageNumber, pageSize)
             res.send(foundPostsByBlogId)
         } else { res.sendStatus(404) }
     })
@@ -67,13 +68,15 @@ blogsRouter.post ('/',
     async (req: Request, res: Response) => {
 
     const {name, description, websiteUrl} = req.body
-    const newBlog = await blogsRepository.createBlog(
+    const idCreatedBlog = await blogService.createBlog(
         name,
         description,
         websiteUrl,
     )
 
-    res.status(201).send(newBlog)
+    const foundCreatedBlog: blogViewModel | null = await blogsQueryRepository.findBlogById(idCreatedBlog)
+
+    res.status(201).send(foundCreatedBlog)
 })
 
 blogsRouter.post ('/:blogsId/posts',
@@ -82,11 +85,14 @@ blogsRouter.post ('/:blogsId/posts',
     async (req: RequestWithParamsAndBody<{blogsId: string}, postInputModel>, res: Response) => {
         const {title, shortDescription, content} = req.body
 
-        const blogId = req.params.blogsId
+        const foundBlog = await blogsQueryRepository.findBlogById(req.params.blogsId)
 
-        const newPost = await postsRepository.createPost(title, shortDescription, content, blogId)
-
-        if (newPost) {
+        if (foundBlog) {
+            const newPost = await postsService.createPost(
+                foundBlog,
+                title,
+                shortDescription,
+                content)
             res.status(201).send(newPost)
         } else { res.sendStatus(404) }
     })
@@ -96,14 +102,11 @@ blogsRouter.put('/:blogsId',
     blogsValidation,
     async (req: Request, res: Response) => {
         const {name, description, websiteUrl} = req.body
-        const successUpdate = await blogsRepository.updateBlog(
-            req.params.blogsId,
-            name,
-            description,
-            websiteUrl,
-        )
 
-        if(successUpdate) {
+        const foundBlog = await blogsQueryRepository.findBlogById(req.params.blogsId)
+
+        if (foundBlog) {
+            await blogService.updateBlog(foundBlog, name, description, websiteUrl)
             res.sendStatus(204)
         } else {
             res.sendStatus(404)
@@ -113,9 +116,9 @@ blogsRouter.put('/:blogsId',
 blogsRouter.delete('/:blogsId',
     authorizationMiddleware,
     async (req: Request, res: Response) => {
-        const successDelete = await blogsRepository.deleteBlog(req.params.blogsId)
-        console.log(successDelete)
-        if (successDelete) {
+        const foundBlog = await blogsQueryRepository.findBlogById(req.params.blogsId)
+        if (foundBlog) {
+            await blogService.deleteBlog(foundBlog)
             res.sendStatus(204)
         } else {
             res.sendStatus(404)
