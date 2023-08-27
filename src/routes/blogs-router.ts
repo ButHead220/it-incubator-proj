@@ -12,6 +12,7 @@ import {
     RequestWithQuery, sortingQueryModel
 } from "../dto/types";
 import {postsRepository} from "../repositories/mongoDb/posts-db-repository";
+import {postsValidation} from "../middlewares/post-validation";
 
 export const blogsRouter = Router({})
 
@@ -78,18 +79,13 @@ blogsRouter.post ('/',
 
 blogsRouter.post ('/:blogsId/posts',
     authorizationMiddleware,
-    blogsValidation,
+    postsValidation,
     async (req: RequestWithParamsAndBody<{blogsId: string}, postInputModel>, res: Response) => {
         const {title, shortDescription, content} = req.body
         const blogId = req.params.blogsId
 
-        const blog = await blogsRepository.findBlogById(blogId)
-
-        if (blog) {
-            const newPost = await postsRepository.createPost(blogId, title, shortDescription, content)
-            res.status(201).send(newPost)
-        }
-        return res.sendStatus(404)
+        const newPost = await postsRepository.createPost(blogId, title, shortDescription, content)
+        res.status(201).send(newPost)
     })
 
 blogsRouter.put('/:blogsId',

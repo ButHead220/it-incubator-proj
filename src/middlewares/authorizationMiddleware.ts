@@ -2,7 +2,6 @@ import {NextFunction, Request, Response} from "express";
 
 export const authorizationMiddleware = (req: Request, res: Response, next: NextFunction) => {
     const auth = req.headers.authorization
-    console.log(auth)
     if (auth === 'Basic YWRtaW46cXdlcnR5') {
         return next()
     } else {
