@@ -43,6 +43,7 @@ export const postsRepository = {
     },
 
     async createPost(title: string, shortDescription: string, content: string, blogId: string): Promise<postsViewModel | null> {
+
         const foundBlog =  await blogsCollection.findOne({id: blogId})
         if (!foundBlog) {
             return null

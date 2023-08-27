@@ -13,6 +13,7 @@ import {
 } from "../dto/types";
 import {postsRepository} from "../repositories/mongoDb/posts-db-repository";
 import {postsValidation} from "../middlewares/post-validation";
+import {postsValidationByBlogId} from "../middlewares/post-validation-by-blog-id";
 
 export const blogsRouter = Router({})
 
@@ -79,13 +80,17 @@ blogsRouter.post ('/',
 
 blogsRouter.post ('/:blogsId/posts',
     authorizationMiddleware,
-    postsValidation,
+    postsValidationByBlogId,
     async (req: RequestWithParamsAndBody<{blogsId: string}, postInputModel>, res: Response) => {
         const {title, shortDescription, content} = req.body
+
         const blogId = req.params.blogsId
 
-        const newPost = await postsRepository.createPost(blogId, title, shortDescription, content)
-        res.status(201).send(newPost)
+        const newPost = await postsRepository.createPost(title, shortDescription, content, blogId)
+
+        if (newPost) {
+            res.status(201).send(newPost)
+        } else { res.sendStatus(404) }
     })
 
 blogsRouter.put('/:blogsId',
