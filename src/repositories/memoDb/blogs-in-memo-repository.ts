@@ -1,4 +1,4 @@
-import {db} from "../database"
+import {db} from "../../database"
 export const blogsRepository = {
     async findAllBlogs() {
         return db.blogs
