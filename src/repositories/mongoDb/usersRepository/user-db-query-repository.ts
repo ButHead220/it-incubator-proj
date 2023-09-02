@@ -7,19 +7,20 @@ export const usersQueryRepository = {
     async findAllUsers(query: userSortingQueryModel): Promise<paginatorViewModel<userViewModel>> {
         let termLogin
         let termEmail
-        if (query.searchLoginTerm === null) {
+        if (query.searchLoginTerm === undefined) {
             termLogin = new RegExp('.*')
         }
         else {
             termLogin = new RegExp('.*' + query.searchLoginTerm + '.*', 'i')
         }
-        if (query.searchLoginTerm === null) {
+        if (query.searchEmailTerm === undefined) {
             termEmail = new RegExp('.*')
         }
         else {
             termEmail = new RegExp('.*' + query.searchEmailTerm + '.*', 'i')
         }
-
+        console.log(typeof query.searchLoginTerm, typeof query.searchEmailTerm)
+        console.log(termLogin , termEmail)
         const sortBy = query.sortBy ? query.sortBy : 'createdAt'
         const sortDirection = query.sortDirection === 'asc' ? 1 : -1
         const pageNumber = query.pageNumber ? Number(query.pageNumber) : 1
