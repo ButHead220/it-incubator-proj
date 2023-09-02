@@ -1,4 +1,4 @@
-import {ObjectId} from "mongodb";
+
 
 export type userInputModel = {
     login: string,
@@ -14,7 +14,7 @@ export type userViewModel = {
 }
 
 export type userDbModel = {
-    _id: ObjectId,
+    _id: string,
     login: string,
     email: string,
     createdAt: string,

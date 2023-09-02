@@ -1,9 +1,9 @@
-import {userInputDbModel} from "../../../dto/user-types";
+import {userDbModel} from "../../../dto/user-types";
 import {usersCollection} from "../../../mongoDb";
 import {usersQueryRepository} from "./user-db-query-repository";
 
 export const usersCommandRepository = {
-    async createUser(newUser: userInputDbModel) {
+    async createUser(newUser: userDbModel) {
         const result = await usersCollection.insertOne(newUser)
         return usersQueryRepository.findUserById(result.insertedId.toString())
     },

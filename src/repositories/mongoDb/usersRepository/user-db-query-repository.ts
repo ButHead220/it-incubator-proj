@@ -1,6 +1,6 @@
 import {userDbModel, userSortingQueryModel, userViewModel} from "../../../dto/user-types";
 import {usersCollection} from "../../../mongoDb";
-import {ObjectId} from "mongodb";
+import {WithId} from "mongodb";
 import {paginatorViewModel} from "../../../dto/types";
 
 export const usersQueryRepository = {
@@ -56,7 +56,7 @@ export const usersQueryRepository = {
     },
 
     async findUserById(id: string): Promise<userViewModel | null> {
-        const result: userDbModel = await usersCollection.findOne({_id: new ObjectId(id)})
+        const result = await usersCollection.findOne({_id: id})
 
         if (result) {
             return {
@@ -70,7 +70,7 @@ export const usersQueryRepository = {
         }
     },
 
-    async findUserByLoginOrEmail(loginOrEmail: string): Promise<userDbModel> {
+    async findUserByLoginOrEmail(loginOrEmail: string): Promise<WithId<userDbModel> | null> {
         const foundedUser = await usersCollection.findOne({ $or:[{'login': loginOrEmail}, {'email': loginOrEmail}]})
         return foundedUser ? foundedUser : null
     }

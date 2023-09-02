@@ -1,6 +1,7 @@
 import dotenv from 'dotenv'
 import {MongoClient} from "mongodb";
-import {blogViewModel, postsViewModel, userDbModel} from "./dto/types";
+import {blogViewModel, postsViewModel} from "./dto/types";
+import {userDbModel} from "./dto/user-types";
 dotenv.config()
 
 const mongoURI = process.env.MONGO_URL || 'mongodb://0.0.0.0:27017'
