@@ -10,7 +10,7 @@ const client = new MongoClient(mongoURI)
 const db = client.db("socialMedia")
 export const blogsCollection = db.collection<blogViewModel>("blogs")
 export const postsCollection = db.collection<postsViewModel>("posts")
-export const usersCollection = db.collection<userDbModel>("posts")
+export const usersCollection = db.collection<userDbModel>("users")
 export async function runDb() {
     try {
         await client.connect()
