@@ -14,7 +14,7 @@ export const usersRouter = Router({})
 usersRouter.get('/' ,
     authorizationMiddleware,
     async (req: RequestWithQuery<userSortingQueryModel>, res: Response) => {
-        const foundUsers = usersQueryRepository
+        const foundUsers = await usersQueryRepository
             .findAllUsers(req.query)
 
         res.send(foundUsers)
