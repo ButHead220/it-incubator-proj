@@ -2,6 +2,7 @@ import { Request } from "express"
 
 export type RequestWithBody<B> = Request<{}, {}, B, {}>
 export type RequestWithQuery<Q> = Request<{}, {}, {}, Q>
+export type RequestWithParams<P> = Request<P, {}, {}, {}>
 export type RequestWithParamsAndQuery<P, Q> = Request<P, {}, {}, Q>
 export type RequestWithParamsAndBody<P, B> = Request<P, {}, B>
 
@@ -53,23 +54,3 @@ export type blogSortingQueryModel = {
     searchNameTerm: string | null,
 }
 
-export type userInputModel = {
-    login: string,
-    password: string,
-    email: string,
-}
-
-export type userViewModel = {
-    id: string,
-    login: string,
-    password: string,
-    email: string,
-}
-
-export type userDbModel = {
-    id: string,
-    login: string,
-    email: string,
-    createdAt: string,
-    passwordHash: string
-}

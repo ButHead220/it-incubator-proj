@@ -1,10 +1,15 @@
-import {userDbModel} from "../../../dto/types";
+import {userInputDbModel} from "../../../dto/user-types";
 import {usersCollection} from "../../../mongoDb";
+import {usersQueryRepository} from "./user-db-query-repository";
 
-export const userCommandRepository = {
-    async createUser(newUser: userDbModel) {
-        await usersCollection.insertOne(newUser)
+export const usersCommandRepository = {
+    async createUser(newUser: userInputDbModel) {
+        const result = await usersCollection.insertOne(newUser)
+        return usersQueryRepository.findUserById(result.insertedId.toString())
+    },
 
-        return newUser.id
+    async deleteUser(id: string) {
+        const isDeleted = await usersCollection.deleteOne({_id: id})
+        return isDeleted.deletedCount === 1
     }
 }
