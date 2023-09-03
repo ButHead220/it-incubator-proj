@@ -1,6 +1,6 @@
 import {userDbModel, userSortingQueryModel, userViewModel} from "../../../dto/user-types";
 import {usersCollection} from "../../../mongoDb";
-import {WithId} from "mongodb";
+import {ObjectId, WithId} from "mongodb";
 import {paginatorViewModel} from "../../../dto/types";
 
 export const usersQueryRepository = {
@@ -19,8 +19,7 @@ export const usersQueryRepository = {
         else {
             termEmail = new RegExp('.*' + query.searchEmailTerm + '.*', 'i')
         }
-        console.log(typeof query.searchLoginTerm, typeof query.searchEmailTerm)
-        console.log(termLogin , termEmail)
+
         const sortBy = query.sortBy ? query.sortBy : 'createdAt'
         const sortDirection = query.sortDirection === 'asc' ? 1 : -1
         const pageNumber = query.pageNumber ? Number(query.pageNumber) : 1
@@ -74,5 +73,9 @@ export const usersQueryRepository = {
     async findUserByLoginOrEmail(loginOrEmail: string): Promise<WithId<userDbModel> | null> {
         const foundedUser = await usersCollection.findOne({ $or:[{'login': loginOrEmail}, {'email': loginOrEmail}]})
         return foundedUser ? foundedUser : null
+    },
+
+    async findUserByIdAndReturnUserDbModel(id: ObjectId): Promise<userDbModel | null> {
+        return await usersCollection.findOne({_id: id.toString()})
     }
 }

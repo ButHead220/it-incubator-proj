@@ -1,6 +1,6 @@
 import {Request, Response, Router} from "express"
-import {authorizationMiddleware} from "../middlewares/authorizationMiddleware";
-import {blogsValidation} from "../middlewares/blogs-validation";
+import {authorizationBaseMiddleware} from "../../middlewares/authorization-base-middleware";
+import {blogsValidation} from "../../middlewares/blogs-validation";
 import {
     blogSortingQueryModel, blogViewModel,
     paginatorViewModel,
@@ -9,12 +9,12 @@ import {
     RequestWithParamsAndBody,
     RequestWithParamsAndQuery,
     RequestWithQuery, sortingQueryModel
-} from "../dto/types";
-import {postsValidationByBlogId} from "../middlewares/post-validation-by-blog-id";
-import {blogService} from "../services/blog-service";
-import {blogsQueryRepository} from "../repositories/mongoDb/blogsRepository/blogs-db-query-repository";
-import {postsQueryRepository} from "../repositories/mongoDb/postsRepository/posts-db-query-repository";
-import {postsService} from "../services/post-service";
+} from "../../dto/types";
+import {postsValidationByBlogIdInParams} from "../../middlewares/post-validation-by-blog-id-in-params";
+import {blogService} from "../../services/blog-service";
+import {blogsQueryRepository} from "../../repositories/mongoDb/blogsRepository/blogs-db-query-repository";
+import {postsQueryRepository} from "../../repositories/mongoDb/postsRepository/posts-db-query-repository";
+import {postsService} from "../../services/post-service";
 
 export const blogsRouter = Router({})
 
@@ -63,7 +63,7 @@ blogsRouter.get('/:blogsId/posts',
     })
 
 blogsRouter.post ('/',
-    authorizationMiddleware,
+    authorizationBaseMiddleware,
     blogsValidation,
     async (req: Request, res: Response) => {
 
@@ -80,8 +80,8 @@ blogsRouter.post ('/',
 })
 
 blogsRouter.post ('/:blogsId/posts',
-    authorizationMiddleware,
-    postsValidationByBlogId,
+    authorizationBaseMiddleware,
+    postsValidationByBlogIdInParams,
     async (req: RequestWithParamsAndBody<{blogsId: string}, postInputModel>, res: Response) => {
         const {title, shortDescription, content} = req.body
 
@@ -98,7 +98,7 @@ blogsRouter.post ('/:blogsId/posts',
     })
 
 blogsRouter.put('/:blogsId',
-    authorizationMiddleware,
+    authorizationBaseMiddleware,
     blogsValidation,
     async (req: Request, res: Response) => {
         const {name, description, websiteUrl} = req.body
@@ -114,7 +114,7 @@ blogsRouter.put('/:blogsId',
     })
 
 blogsRouter.delete('/:blogsId',
-    authorizationMiddleware,
+    authorizationBaseMiddleware,
     async (req: Request, res: Response) => {
         const foundBlog = await blogsQueryRepository.findBlogById(req.params.blogsId)
         if (foundBlog) {

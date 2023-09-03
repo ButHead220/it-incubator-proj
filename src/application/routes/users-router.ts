@@ -1,18 +1,18 @@
 import {Request, Response, Router} from "express";
-import {authorizationMiddleware} from "../middlewares/authorizationMiddleware";
-import {userValidation} from "../middlewares/user-validation";
+import {authorizationBaseMiddleware} from "../../middlewares/authorization-base-middleware";
+import {userValidation} from "../../middlewares/user-validation";
 import {
     RequestWithBody,
     RequestWithQuery
-} from "../dto/types";
-import {userInputModel, userSortingQueryModel} from "../dto/user-types";
-import {userService} from "../services/user-service";
-import {usersQueryRepository} from "../repositories/mongoDb/usersRepository/user-db-query-repository";
+} from "../../dto/types";
+import {userInputModel, userSortingQueryModel} from "../../dto/user-types";
+import {userService} from "../../services/user-service";
+import {usersQueryRepository} from "../../repositories/mongoDb/usersRepository/user-db-query-repository";
 
 export const usersRouter = Router({})
 
 usersRouter.get('/' ,
-    authorizationMiddleware,
+    authorizationBaseMiddleware,
     async (req: RequestWithQuery<userSortingQueryModel>, res: Response) => {
         const foundUsers = await usersQueryRepository
             .findAllUsers(req.query)
@@ -20,7 +20,7 @@ usersRouter.get('/' ,
         res.send(foundUsers)
     })
 usersRouter.post('/',
-    authorizationMiddleware,
+    authorizationBaseMiddleware,
     userValidation,
     async (req: RequestWithBody<userInputModel>, res: Response) => {
         const {login, password, email} = req.body
@@ -31,7 +31,7 @@ usersRouter.post('/',
     })
 
 usersRouter.delete('/:userId',
-    authorizationMiddleware,
+    authorizationBaseMiddleware,
     async (req: Request, res: Response) => {
         const isDeletedUser = await userService.deleteUser(req.params.userId)
         if (isDeletedUser) {

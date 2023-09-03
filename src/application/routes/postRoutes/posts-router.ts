@@ -1,10 +1,10 @@
 import {Router, Request, Response} from "express";
-import {authorizationMiddleware} from "../middlewares/authorizationMiddleware";
-import {postsValidation} from "../middlewares/post-validation";
-import {RequestWithQuery, sortingQueryModel} from "../dto/types";
-import {postsQueryRepository} from "../repositories/mongoDb/postsRepository/posts-db-query-repository";
-import {blogsQueryRepository} from "../repositories/mongoDb/blogsRepository/blogs-db-query-repository";
-import {postsService} from "../services/post-service";
+import {authorizationBaseMiddleware} from "../../../middlewares/authorization-base-middleware";
+import {postsValidation} from "../../../middlewares/post-validation";
+import {RequestWithQuery, sortingQueryModel} from "../../../dto/types";
+import {postsQueryRepository} from "../../../repositories/mongoDb/postsRepository/posts-db-query-repository";
+import {blogsQueryRepository} from "../../../repositories/mongoDb/blogsRepository/blogs-db-query-repository";
+import {postsService} from "../../../services/post-service";
 
 export const postsRouter = Router({})
 
@@ -17,7 +17,7 @@ postsRouter.get ('/',
 })
 
 postsRouter.post ('/',
-    authorizationMiddleware,
+    authorizationBaseMiddleware,
     postsValidation,
     async (req: Request, res: Response) => {
 
@@ -50,7 +50,7 @@ postsRouter.get('/:postId',
 })
 
 postsRouter.put('/:postId',
-    authorizationMiddleware,
+    authorizationBaseMiddleware,
     postsValidation,
     async (req: Request, res: Response) => {
     const {title, shortDescription, content, blogId} = req.body
@@ -66,7 +66,7 @@ postsRouter.put('/:postId',
     })
 
 postsRouter.delete('/:postId',
-    authorizationMiddleware,
+    authorizationBaseMiddleware,
     async (req: Request, res: Response) => {
 
         const foundPost = await postsQueryRepository.foundPostById(req.params.postId)
