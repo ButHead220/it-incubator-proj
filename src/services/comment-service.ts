@@ -32,9 +32,10 @@ export const commentsService = {
 
     async deleteComment(commentId: string, userId: string) {
         const foundComment = await commentsQueryRepository.foundCommentById(commentId)
+
         if (foundComment?.commentatorInfo.userId === userId) {
             return await commentsCommandRepository.deleteComment(foundComment)
-        } else if (foundComment?.commentatorInfo.userId !== userId) {
+        } else if (foundComment === null) {
             return null
         } else { return false }
     },
