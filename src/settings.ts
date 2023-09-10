@@ -5,7 +5,6 @@ import {testingRouter} from "./application/routes/testing-router";
 import {usersRouter} from "./application/routes/users-router";
 import {authRouter} from "./application/routes/auth-router";
 import dotenv from "dotenv";
-import {commentsInPostsRouter} from "./application/routes/postRoutes/comments-in-posts-router";
 import {commentsRouter} from "./application/routes/postRoutes/commentRoutes/comments-router";
 dotenv.config()
 export const app : Express = express()
@@ -18,7 +17,6 @@ app.use('/posts', postsRouter)
 app.use('/testing', testingRouter)
 app.use('/users', usersRouter)
 app.use('/auth', authRouter)
-app.use('/posts/:postId/comments', commentsInPostsRouter)
 app.use('/comments', commentsRouter)
 
 export const settings = {

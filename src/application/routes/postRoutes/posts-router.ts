@@ -1,10 +1,21 @@
 import {Router, Request, Response} from "express";
 import {authorizationBaseMiddleware} from "../../../middlewares/authorization-base-middleware";
 import {postsValidation} from "../../../middlewares/post-validation";
-import {RequestWithQuery, sortingQueryModel} from "../../../dto/types";
+import {
+    paginatorViewModel,
+    RequestWithParamsAndBody,
+    RequestWithParamsAndQuery,
+    RequestWithQuery,
+    sortingQueryModel
+} from "../../../dto/types";
 import {postsQueryRepository} from "../../../repositories/mongoDb/postsRepository/posts-db-query-repository";
 import {blogsQueryRepository} from "../../../repositories/mongoDb/blogsRepository/blogs-db-query-repository";
 import {postsService} from "../../../services/post-service";
+import {commentInputModel, commentViewModel} from "../../../dto/comments-types";
+import {commentsQueryRepository} from "../../../repositories/mongoDb/commentsRepository/comments-db-query-repository";
+import {authBearerMiddleware} from "../../../middlewares/authorization-bearer-middleware";
+import {commentsValidation} from "../../../middlewares/comments-validation";
+import {commentsService} from "../../../services/comment-service";
 
 export const postsRouter = Router({})
 
@@ -73,6 +84,43 @@ postsRouter.delete('/:postId',
         if (foundPost) {
             await postsService.deletePost(foundPost)
             res.sendStatus(204)
+        } else {
+            res.sendStatus(404)
+        }
+    })
+
+postsRouter.get('/:postId/comments',
+    async (req: RequestWithParamsAndQuery<{postId: string}, sortingQueryModel>, res: Response)=> {
+        const foundPost = await postsQueryRepository.foundPostById(req.params.postId)
+        const {pageNumber, pageSize, sortBy, sortDirection} = req.query
+
+        if (foundPost) {
+            const foundCommentsByPostId: paginatorViewModel<commentViewModel> = await commentsQueryRepository
+                .findCommentsByPostId(req.params.postId,
+                    sortBy,
+                    sortDirection,
+                    pageNumber,
+                    pageSize)
+
+            res.send(foundCommentsByPostId)
+        } else { res.sendStatus(404) }
+    })
+postsRouter.post('/:postId/comments',
+    authBearerMiddleware,
+    commentsValidation,
+    async (req: RequestWithParamsAndBody<{postId: string}, commentInputModel>, res: Response) => {
+
+        console.log(req.params)
+        const foundPost = await postsQueryRepository.foundPostById(req.params.postId)
+
+        if (foundPost) {
+            const createdComment = await commentsService
+                .createComment(
+                    req.body.content,
+                    req.user!,
+                    req.params.postId
+                )
+            res.status(201).send(createdComment)
         } else {
             res.sendStatus(404)
         }
