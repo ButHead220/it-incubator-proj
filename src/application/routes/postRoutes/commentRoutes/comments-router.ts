@@ -27,7 +27,7 @@ commentsRouter.put('/:commentId',
 
         if (isUpdatedComment) {
             res.sendStatus(204)
-        } else if (isUpdatedComment === null) {
+        } else if (isUpdatedComment === false) {
             res.sendStatus(403)
         } else {
             res.sendStatus(404)
