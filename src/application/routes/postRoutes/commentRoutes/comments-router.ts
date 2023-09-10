@@ -10,7 +10,7 @@ import {commentsValidation} from "../../../../middlewares/comments-validation";
 
 export const commentsRouter = Router({})
 
-commentsRouter.get('/commentId',
+commentsRouter.get('/:commentId',
     async (req: RequestWithParams<{commentId: string}>, res: Response) => {
         const foundComment = await commentsQueryRepository.foundCommentById(req.params.commentId)
 
@@ -19,7 +19,7 @@ commentsRouter.get('/commentId',
         } else { res.sendStatus(404) }
     })
 
-commentsRouter.put('/commentId',
+commentsRouter.put('/:commentId',
     authBearerMiddleware,
     commentsValidation,
     async (req: RequestWithParamsAndBody<{commentId: string}, commentInputModel>, res: Response) => {
@@ -34,7 +34,7 @@ commentsRouter.put('/commentId',
         }
     })
 
-commentsRouter.delete('/commentId',
+commentsRouter.delete('/:commentId',
     authBearerMiddleware,
     async (req: RequestWithParams<{commentId: string}>, res: Response) => {
         const isDeletedComment = await commentsService.deleteComment(req.params.commentId, req.user!._id)

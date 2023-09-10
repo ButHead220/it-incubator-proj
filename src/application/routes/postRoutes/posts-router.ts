@@ -109,8 +109,6 @@ postsRouter.post('/:postId/comments',
     authBearerMiddleware,
     commentsValidation,
     async (req: RequestWithParamsAndBody<{postId: string}, commentInputModel>, res: Response) => {
-
-        console.log(req.params)
         const foundPost = await postsQueryRepository.foundPostById(req.params.postId)
 
         if (foundPost) {
