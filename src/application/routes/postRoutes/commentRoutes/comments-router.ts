@@ -41,7 +41,7 @@ commentsRouter.delete('/:commentId',
 
         if (isDeletedComment) {
             res.sendStatus(204)
-        } else if (isDeletedComment === null) {
+        } else if (isDeletedComment === false) {
             res.sendStatus(403)
         } else {
             res.sendStatus(404)
